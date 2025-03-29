@@ -1,0 +1,929 @@
+// 5 este pozitie libera
+// 1 este poztie pentru jucator
+// 0 este pozitie pentru calculator
+#include <iostream>
+#include <conio.h>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+int a [4][4];
+//int pasi = 0; //facea parte din fostul "verificaredraw"
+void alegerej2 ( ) //functie alegere player #2 -multiplayer
+{
+
+	int i, j;
+	do
+	{
+		cout << "Introduceti linia si coloana pentru 0: ";
+		cin >> i >> j;
+	} while (a [i][j] == 1 || i >= 4 || j >= 4 || i <= 0 || j <= 0);
+	a [i][j] = 0;
+	//pasi++;
+}
+void alegeremediu ( ) //functie alegere pentru calculator pentru modul mediu - alegere random
+{
+	srand ((unsigned) time (NULL));
+	int i, j, bine=0; //bine verifica daca calculatorul a pus "0" pe o pozitie disponibila
+	do {
+		i = rand ( ) % 3 + 1;
+		j = rand ( ) % 3 + 1;
+		if (a [i][j] == 5)
+		{
+			a [i][j] = 0;
+			bine = 1;
+		}
+	} while (bine != 1);
+	//pasi++;
+
+}
+void alegerecolt2 ( ) //functie alegere pentru calculator pozitie colt + centru #2 (Razboiul clonelor)
+{
+	srand ((unsigned) time (NULL));
+	int check = 0; //check verifica daca calculatorul a pus "1" pe o pozitie disponibila
+	int drw = 0; //variabila care arata de cate ori a fost aleasa o pozitie indisponibila (ne arata ca nu mai sunt colturi libere)
+	if (a [2][2] != 5)
+	{
+
+		while (check != 1 && drw != 100) {
+			int random = rand ( ) % 4; //alegem un colt la intamplare
+			switch (random)
+			{
+			case 0: //colt stanga sus
+			{
+				if (a [1][1] == 5)
+				{
+					a [1][1] = 1;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 1: // colt dreapta sus
+			{
+				if (a [1][3] == 5)
+				{
+					a [1][3] = 1;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 2: //colt stanga jos
+			{
+				if (a [3][1] == 5)
+				{
+					a [3][1] = 1;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 3: // colt dreapta jos
+			{
+				if (a [3][3] == 5)
+				{
+					a [3][3] = 1;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			}
+		}
+	}
+	else a [2][2] = 1;
+}
+void alegerecolt ( ) //functie alegere pentru calculator - pozitie colt + centru
+{
+	srand ((unsigned) time (NULL));
+	int check = 0; //check verifica daca calculatorul a pus "0" pe o pozitie disponibila
+	int drw = 0; //variabila care arata de cate ori a fost aleasa o pozitie indisponibila (opreste variabila daca nu mai sunt colturi libere)
+	if (a [2][2] != 5)
+	{
+
+		while (check!=1 && drw!=100) {
+			int random = rand ( ) % 4;
+			switch (random)
+			{
+			case 0: //colt stanga sus
+			{
+				if (a [1][1] == 5)
+				{
+					a [1][1] = 0;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 1: // colt dreapta sus
+			{
+				if (a [1][3] == 5)
+				{
+					a [1][3] = 0;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 2: //colt stanga jos
+			{
+				if (a [3][1] == 5)
+				{
+					a [3][1] = 0;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			case 3: //colt dreapta jos
+			{
+				if (a [3][3] == 5)
+				{
+					a [3][3] = 0;
+					check = 1;
+				}
+				else {
+					check = 0;
+					drw++;
+				}
+				break;
+			}
+			}
+		}
+	}
+	else a [2][2] = 0;
+}
+void alegeredanger2 ( ) //functie alegere pentru calculator cand e pe cale sa piarda #2 (Razboiul clonelor)
+{
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j]; //suma orizontala
+		if (s == 5) // o singura pozitie libera si doua ale adversarului pe orizontala
+		{
+			for (int j = 1; j <= 3; j++)
+				if (a [i][j] == 5) //pozitia libera
+					a [i][j] = 1;
+			break;
+		}
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j]; //suma verticala
+		if (s == 5) // o singura pozitie libera si doua ale adversarului pe verticala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][j] == 5) //pozitia libera
+					a [i][j] = 1;
+			break;
+		}
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][i]; //suma diagonala principala
+		if (s == 5) // o singura pozitie libera si doua ale adversarului pe diagonala principala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][i] == 5) //pozitia libera
+					a [i][i] = 1;
+			break;
+		}
+	}
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][4 - i]; //suma diagonala secundara
+		if (s == 5) // o singura pozitie libera si doua ale adversarului pe verticala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][4 - i] == 5) //pozitia libera
+					a [i][4 - i] = 1;
+			break;
+		}
+	}
+
+}
+void alegeredanger ( ) //functie alegere pentru calculator cand este pe cale sa piarda
+{
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j]; //suma orizontala
+		if (s == 7) // o singura pozitie libera si doua ale adversarului pe orizontala
+		{
+			for (int j = 1; j <= 3; j++)
+				if (a [i][j] == 5) //pozitia libera
+					a [i][j] = 0;
+			break;
+		}
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j]; //suma verticala
+		if (s == 7) // o singura pozitie libera si doua ale adversarului pe verticala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][j] == 5) //pozitie libera
+					a [i][j] = 0;
+			break;
+		}
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][i]; //suma diagonala principala
+		if (s == 7) // o singura pozitie libera si doua ale adversarului pe diagonala principala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][i] == 5) //pozitie libera
+					a [i][i] = 0;
+			break;
+		}
+	}
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][4 - i]; //suma diagonala secundara
+		if (s == 7) // o singura pozitie libera si doua ale adversarului pe diagonala secundara
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][4-i] == 5) //pozitie libera
+					a [i][4-i] = 0;
+			break;
+		}
+	}
+
+}
+void alegerewin2 ( ) //functie alegere pentru calculator cand este pe cale sa castige #2 (Razboiul clonelor)
+{
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j]; //suma orizontala
+		if (s == 7) // o singura pozitie libera si doua ale calculatorului pe orizontala
+		{
+			for (int j = 1; j <= 3; j++)
+				if (a [i][j] == 5) //pozitia libera
+					a [i][j] = 1;
+			break;
+		}
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j]; //suma verticala
+		if (s == 7) // o singura pozitie libera si doua ale calculatorului pe verticala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][j] == 5) //pozitia libera
+					a [i][j] = 1;
+			break;
+		}
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][i]; //suma diagonala principala
+		if (s == 7) // o singura pozitie libera si doua ale calculatorului pe diagonala principala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][i] == 5) //pozitia libera
+					a [i][i] = 1;
+			break;
+		}
+	}
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][4 - i]; //suma diagonala secundara
+		if (s == 7) // o singura pozitie libera si doua ale calculatorului pe diagonala secundara
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][4 - i] == 5) //pozitia libera
+					a [i][4 - i] = 1;
+			break;
+		}
+	}
+}
+void alegerewin ( ) //functie alegere pentru calculator cand este pe cale sa castige
+{
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j]; //suma orizontala
+		if (s == 5) // o singura pozitie libera si doua ale calculatorului pe orizontala
+		{
+			for (int j = 1; j <= 3; j++)
+				if (a [i][j] == 5) //pozitie libera
+					a [i][j] = 0;
+			break;
+		}
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j]; //suma verticala
+		if (s == 5) // o singura pozitie libera si doua ale calculatorului pe verticala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][j] == 5) //pozitie libera
+					a [i][j] = 0;
+			break;
+		}
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][i]; //suma diagonala principala
+		if (s == 5) // o singura pozitie libera si doua ale calculatorului pe diagonala principala
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][i] == 5) //pozitie libera
+					a [i][i] = 0;
+			break;
+		}
+	}
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+	{
+		s += a [i][4 - i]; //suma diagonala secundara
+		if (s == 5) // o singura pozitie libera si doua ale calculatorului pe diagonala secundara
+		{
+			for (int i = 1; i <= 3; i++)
+				if (a [i][4 - i] == 5) //pozitie libera
+					a [i][4 - i] = 0;
+			break;
+		}
+	}
+}
+int check ( ) //functie verificare stadiu joc pentru calculator
+{
+	//nu au treaba sumele cu valoarea de la return, simpla coincidenta // to remake lol
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j];
+		if (s == 5) //calculatorul castiga
+			return 7;
+		if (s == 7) //jucatorul castiga
+			return 5;
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j];
+		if (s == 5) //calculatorul castiga
+			return 7;
+		if (s == 7) //jucatorul castiga
+			return 5;
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][i];
+	if (s == 5) //calculatorul castiga
+		return 7;
+	if (s == 7) //jucatorul castiga
+		return 5;
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][4 - i];
+	if (s == 5) //calculatorul castiga
+		return 7;
+	if (s == 7) //jucatorul castiga
+		return 5;
+	return 0; //nu castiga nimeni
+
+}
+int check2 ( ) //functie verificare stadiu joc pentru calculator #2 (Razboiul clonelor)
+{
+	//verifica "check" pentru mai multe explicatii
+	//nu au treaba sumele cu valoarea de la return, simpla coincidenta // to remake lol
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j];
+		if (s == 5)
+			return 5;
+		if (s == 7)
+			return 7;
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j];
+		if (s == 5)
+			return 5;
+		if (s == 7)
+			return 7;
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][i];
+	if (s == 5)
+		return 5;
+	if (s == 7)
+		return 7;
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][4 - i];
+	if (s == 5)
+		return 5;
+	if (s == 7)
+		return 7;
+	if (a [1][1] != 5 && a [1][3] != 5 && a [3][1] != 5 && a [3][3] != 5)
+		return 9;
+	return 0;
+
+}
+int checkg ( ) //functie verificare stadiu joc pentru modul Greu, nu blocheaza playerul
+{
+	//verifica "check" pentru mai multe explicatii
+	//nu au treaba sumele cu valoarea de la return, simpla coincidenta // to remake lol
+	//functie copiata de mai sus, are instructiuni in plus dezactivate // to do lol
+	for (int i = 1; i <= 3; i++)
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j];
+		if (s == 5)
+			return 7;
+		//if (s == 7)
+			//return 5;
+	}
+	for (int j = 1; j <= 3; j++)
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j];
+		if (s == 5)
+			return 7;
+		//if (s == 7)
+			//return 5;
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][i];
+	if (s == 5)
+		return 7;
+	//if (s == 7)
+		//return 5;
+	s = 0;
+	for (int i = 1; i <= 3; i++)
+		s += a [i][4 - i];
+	if (s == 5)
+		return 7;
+	//if (s == 7)
+		//return 5;
+	if (a [1][1] != 5 && a [1][3] != 5 && a [3][1] != 5 && a [3][3] != 5)
+		return 9;
+	return 0;
+
+}
+void alegerej ( ) //functie alegere pentru jucator
+{
+
+	int i, j;
+	do
+	{
+		cout << "Introduceti linia si coloana pentru X: ";
+		cin >> i >> j;
+	} while (a [i][j] == 0 || i >= 4 || j >= 4 || i <= 0 || j <= 0);
+	a [i][j] = 1;
+	//pasi++;
+}
+void alegerec ( ) //functie alegere pentru calculator - varianta simpla
+{
+
+	int i, j;
+	for (i = 1; i <= 3; i++)
+		for (j = 1; j <= 3; j++)
+			if (a [i][j] == 5)
+			{
+				a [i][j] = 0;
+				i = 3;// oprim functia
+				j = 3;
+			}
+	//pasi++;
+
+}
+int verificarec ( ) //functie verificare stadiu joc (win) pentru calculator
+{
+
+	for (int i = 1; i <= 3; i++) //orizontala
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j];
+		if (s == 0)
+			return 1;
+	}
+	for (int j = 1; j <= 3; j++) //verticala
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j];
+		if (s == 0)
+			return 1;
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++) //diagonala principala
+		s += a [i][i];
+	if (s == 0)
+		return 1;
+	s = 0;
+	for (int i = 1; i <= 3; i++) //diagonala secundara
+		s += a [i][4 - i];
+	if (s == 0)
+		return 1;
+	return 0;
+
+}
+int verificarej ( ) //functie verificare stadiu joc (win) pentru jucator
+{
+
+	for (int i = 1; i <= 3; i++) //orizontala
+	{
+		int s = 0;
+		for (int j = 1; j <= 3; j++)
+			s += a [i][j];
+		if (s == 3)
+		{
+			cout << "Bravo"; //nu functioneaza da imi e lene sa le scot
+			return 1;
+		}
+	}
+	for (int j = 1; j <= 3; j++) //verticala
+	{
+		int s = 0;
+		for (int i = 1; i <= 3; i++)
+			s += a [i][j];
+		if (s == 3)
+		{
+			cout << "Bravo";
+			return 1;
+		}
+	}
+	int s = 0;
+	for (int i = 1; i <= 3; i++) //diagonala principala
+		s += a [i][i];
+	if (s == 3)
+	{
+		cout << "Bravo";
+		return 1;
+	}
+	s = 0;
+	for (int i = 1; i <= 3; i++) // diagonala secundara
+		s += a [i][4 - i];
+	if (s == 3)
+	{
+		cout << "Bravo";
+		return 1;
+	}
+	return 0;
+
+}
+void afisare ( ) //functie afisare
+{
+
+	system ("chcp 1252");
+	cout << "   1  2  3" << endl;
+	cout << "   _  _  _" << endl;
+	for (int i = 1; i <= 3; i++)
+	{
+		cout << i << " ";
+		for (int j = 1; j <= 3; j++)
+		{
+			cout << "|" << a [i][j] << "|";
+		}
+		if (i != 3)
+			cout << endl, cout << "   =  =  =", cout << endl;
+
+	}
+	cout << endl << "   ¯  ¯  ¯" << endl;
+	//cout << pasi; DEBUG
+
+
+	//sa se afiseze mat cu valori pt i si j si cu grafic (|-)
+}
+void clrscr ( )
+{
+	system ("cls");
+}
+int verificaredraw ( ) //functie verificare stadiu joc (draw)
+{
+	int d = 0; //numar pozitii libere
+	for (int i = 1; i <= 3; i++)
+		for (int j = 1; j <= 3; j++)
+			if (a [i][j] == 5)
+				d++;
+	if (d == 0)
+		return 1;
+	else return 0;
+
+}
+void initializare ( ) //functie initializare matricie
+{
+
+
+	for (int i = 1; i <= 3; i++)
+		for (int j = 1; j <= 3; j++)
+			a [i][j] = 5;
+}
+
+int main ( )
+{
+	int mod = rand();
+	cout << "Bine ai venit la jocul meu de X&0"<<endl;
+	cout << "Alege modul de joc:"<<endl;
+	cout << "1. Usor" << endl;
+	cout << "2. Mediu" << endl;
+	cout << "3. Greu" << endl;
+	cout << "4. Imposibil" << endl;
+	cout << "5. Cu un prieten" << endl;
+	cout << "6. Razboiul clonelor" << endl;
+	cout << "Alegerea ta este: ";
+	cin >> mod;
+
+	int ok = 0;
+	int strategie = 0;
+	initializare ( );
+	if (mod==1) //Usor
+		do {
+
+			clrscr ( );
+			afisare ( );
+			alegerej ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "Felicitari jucatorule!"<<endl;
+				break;
+			}
+			alegerec ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat calculatorul, esti vai de capul tau!"<<endl;
+				break;
+			}
+			ok = verificaredraw ( );
+		} while (ok != 1);
+	if (mod==3) //Greu - Calculatorul nu poate verifica daca jucatorul urmeaza sa castige
+		do {
+
+			clrscr ( );
+			afisare ( );
+			strategie = checkg ( );
+			switch (strategie)
+			{
+			case 0:
+			{
+				alegerecolt ( );
+				break;
+			}
+			case 5:
+			{
+				alegerecolt ( );
+				//alegeredanger ( );
+				break;
+			}
+			case 7:
+			{
+				alegerewin ( );
+				break;
+			}
+			case 9:
+			{
+				alegeremediu ( );
+				break;
+			}
+			}
+			//alegerec ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat calculatorul, esti vai de capul tau!" << endl;
+				break;
+			}
+			alegerej ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "Felicitari jucatorule!" << endl;
+				break;
+			}
+			ok = verificaredraw ( );
+		} while (ok != 1);
+	if (mod==2) //Mediu
+		do {
+
+			clrscr ( );
+			afisare ( );
+			alegerej ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "Felicitari jucatorule!" << endl;
+				break;
+			}
+			alegeremediu ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat calculatorul, esti vai de capul tau!" << endl;
+				break;
+			}
+			ok = verificaredraw ( );
+		} while (ok != 1);
+	if (mod==4) //Imposibil
+		do {
+
+			clrscr ( );
+			afisare ( );
+			alegerej ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "Felicitari jucatorule!"<<endl;
+				break;
+			}
+			strategie = check ( );
+			switch (strategie)
+			{
+				case 0:
+				{
+					alegerecolt();
+					break;
+				}
+				case 5:
+				{
+					alegeredanger ( );
+					break;
+				}
+				case 7:
+				{
+					alegerewin ( );
+					break;
+				}
+			}
+			//alegerec ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat calculatorul, esti vai de capul tau!"<<endl;
+				break;
+			}
+			ok = verificaredraw ( );
+		} while (ok != 1);
+	if (mod==5) //Multiplayer
+		do {
+
+			clrscr ( );
+			afisare ( );
+			alegerej ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat jucatorul 1!" << endl;
+				break;
+			}
+			alegerej2 ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "A castigat jucatorul 2!" << endl;
+				break;
+			}
+			ok = verificaredraw ( );
+		} while (ok != 1);
+	if (mod==6) // PC vs PC - are 4 posibilitati. cred
+		do {
+
+			clrscr ( );
+			afisare ( );
+			strategie = check2 ( );
+			switch (strategie)
+			{
+			case 0:
+			{
+				alegerecolt2 ( );
+				break;
+			}
+			case 5:
+			{
+				alegeredanger2 ( );
+				break;
+			}
+			case 7:
+			{
+				alegerewin2 ( );
+				break;
+			}
+			case 9:
+			{
+				alegeremediu ( );
+				break;
+			}
+
+			}
+			//alegerec ( );
+			ok = verificarej ( );
+			clrscr ( );
+			afisare ( );
+			if (ok == 1)
+			{
+				cout << "Felicitari jucatorule!" << endl;
+				break;
+			}
+			cin.get ( );
+			strategie = check ( );
+			switch (strategie)
+			{
+			case 0:
+			{
+				alegerecolt ( );
+				break;
+			}
+			case 5:
+			{
+				alegeredanger ( );
+				break;
+			}
+			case 7:
+			{
+				alegerewin ( );
+				break;
+			}
+			}
+			//alegerec ( );
+			ok = verificarec ( );
+			clrscr ( );
+			afisare ( );
+			ok = verificarec ( );
+			if (ok == 1)
+			{
+				cout << "A castigat calculatorul, esti vai de capul tau!" << endl;
+				break;
+			}
+			ok = verificaredraw ( );
+			cin.get ( );
+		} while (ok != 1);
+
+}
